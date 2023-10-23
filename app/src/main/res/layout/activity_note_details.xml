@@ -23,12 +23,22 @@
             android:text="title"
             android:id="@+id/DetailTitleOf_note"/>
     </androidx.appcompat.widget.Toolbar>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:id="@+id/date_shower"
+        android:text="date showing..."
+        android:textColor="@color/black"
 
+
+        android:layout_below="@+id/Toolbarofnote_details"
+
+    />
     <TextView
         android:id="@+id/detail_contentOfNote"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/Toolbarofnote_details"
+        android:layout_below="@+id/date_shower"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
         android:layout_marginStart="2dp"

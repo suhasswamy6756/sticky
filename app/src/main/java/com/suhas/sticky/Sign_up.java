@@ -89,7 +89,7 @@ public class Sign_up extends AppCompatActivity {
                 public void onComplete(@NonNull Task<Void> task) {
                     Toast.makeText(getApplicationContext(),"Verfication emial is sent,verify and Login again",Toast.LENGTH_SHORT).show();
                     firebaseAuth.signOut();
-                    finish();
+                    Sign_up.this.finish();
                     startActivity(new Intent(getApplicationContext(),MainActivity.class));
                 }
             });

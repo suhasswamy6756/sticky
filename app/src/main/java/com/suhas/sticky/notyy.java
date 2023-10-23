@@ -3,16 +3,12 @@ package com.suhas.sticky;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -35,14 +31,13 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 public class notyy extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
@@ -77,9 +72,21 @@ public class notyy extends AppCompatActivity {
                 startActivity(new Intent(getApplicationContext(), create.class));
 
 
+
             }
         });
-        Query query = firebaseFirestore.collection("notes").document(firebaseUser.getUid()).collection("myNotes").orderBy("title");
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            // User is authenticated, you can access their UID
+            String uid = currentUser.getUid();
+            // Proceed with your logic here
+        } else {
+            // User is not authenticated, redirect to the login screen
+            startActivity(new Intent(this, MainActivity.class));
+            finish(); // Finish the current activity to prevent returning to it after login
+        }
+
+        Query query = firebaseFirestore.collection("notes").document(firebaseUser.getUid()).collection("myNotes");
         FirestoreRecyclerOptions<firebasemodel> alluseernotes = new FirestoreRecyclerOptions.Builder<firebasemodel>().setQuery(query, firebasemodel.class).build();
 
         noteAdapter = new FirestoreRecyclerAdapter<firebasemodel, NoteViewHolder>(alluseernotes) {
@@ -87,6 +94,9 @@ public class notyy extends AppCompatActivity {
 
             @Override
             protected void onBindViewHolder(@NonNull NoteViewHolder holder, int position, @NonNull firebasemodel model) {
+
+
+
                 holder.mnotes = findViewById(R.id.note);
                 String DocId = noteAdapter.getSnapshots().getSnapshot(position).getId();
 
@@ -98,9 +108,9 @@ public class notyy extends AppCompatActivity {
                 int colourCode = getColorForNoteId(DocId);
                 mnotes.setBackgroundColor(colourCode);
 
-
                 holder.noteTitle.setText(model.getTitle());
                 holder.noteContent.setText(model.getContent());
+                holder.mdate_show.setText(model.getDate());
 
 
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -113,6 +123,7 @@ public class notyy extends AppCompatActivity {
                         intent.putExtra("title", model.getTitle());
                         intent.putExtra("content", model.getContent());
                         intent.putExtra("noteId", DocId);
+                        intent.putExtra("date",model.getDate());
 
                         view.getContext().startActivity(intent);
 //                        Toast.makeText(getApplicationContext(),"this is clicked", Toast.LENGTH_SHORT).show();
@@ -146,7 +157,7 @@ public class notyy extends AppCompatActivity {
                                     public void onSuccess(Void unused) {
                                         int position = holder.getAdapterPosition();
                                         if (position != RecyclerView.NO_POSITION) {
-                                            noteAdapter.getSnapshots().getSnapshot(position).getReference().delete();
+//                                            noteAdapter.getSnapshots().getSnapshot(position).getReference().delete();
                                             noteAdapter.notifyItemRemoved(position);
                                         }
                                         Toast.makeText(getApplicationContext(), "This is note is Deleted", Toast.LENGTH_SHORT).show();
@@ -186,7 +197,7 @@ public class notyy extends AppCompatActivity {
 
     public class NoteViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView noteTitle, noteContent;
+        private TextView noteTitle, noteContent,mdate_show;
         LinearLayout mnotes;
 
 
@@ -195,7 +206,7 @@ public class notyy extends AppCompatActivity {
             noteTitle = itemView.findViewById(R.id.note_title);
             noteContent = itemView.findViewById(R.id.notecontent);
             mnotes = itemView.findViewById(R.id.note);
-
+            mdate_show = itemView.findViewById(R.id.date_show);
 
         }
     }
@@ -222,6 +233,7 @@ public class notyy extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        firebaseAuth.addAuthStateListener(authStateListener);
         noteAdapter.startListening();
     }
 
@@ -231,7 +243,21 @@ public class notyy extends AppCompatActivity {
         if (noteAdapter != null) {
             noteAdapter.stopListening();
         }
+        if(authStateListener !=null){
+            firebaseAuth.removeAuthStateListener(authStateListener);
+        }
     }
+    private FirebaseAuth.AuthStateListener authStateListener = new FirebaseAuth.AuthStateListener() {
+        @Override
+        public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+            FirebaseUser user = firebaseAuth.getCurrentUser();
+            if (user != null) {
+                // User is signed in, you can access user.getUid() here
+            } else {
+                // User is signed out or not authenticated, handle accordingly
+            }
+        }
+    };
     private int getColorForNoteId(String noteId) {
         // Use noteId.hashCode() to generate a hash value based on the note's ID
         int hash = noteId.hashCode();
@@ -290,9 +316,10 @@ public class notyy extends AppCompatActivity {
                             // Handle logout action here, such as navigating to the login screen
                             // Finish the current activity
                             firebaseAuth.signOut();
-                            finish();
 
                             startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                            notyy.this.finish();
+
                         }
                     })
                     .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -306,8 +333,15 @@ public class notyy extends AppCompatActivity {
 
             AlertDialog alertDialog = builder.create();
             alertDialog.show();
+
+
         }else{
         super.onBackPressed();
     }
     }
+    public int getItemCount(){
+        return noteAdapter.getItemCount();
+    }
+
+
 }

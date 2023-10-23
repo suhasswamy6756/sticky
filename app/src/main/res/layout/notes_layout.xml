@@ -34,9 +34,9 @@
                     android:paddingRight="10dp"
                     android:paddingBottom="10dp"
                     android:text="you are developer..?"
-                    android:textStyle="bold|normal"
-                    android:textSize="16sp"
                     android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:textStyle="bold|normal"
 
                     />
 
@@ -66,6 +66,14 @@
                 android:text="@string/_subtitle_"
                 android:textColor="@color/black"
                 />
+
+            <TextView
+                android:id="@+id/date_show"
+                android:text="date"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
         </LinearLayout>
 

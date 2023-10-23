@@ -76,7 +76,7 @@ public class editnoteActivity extends AppCompatActivity {
 
                                 startActivity((new Intent(getApplicationContext(), notyy.class)));
                                 Toast.makeText(getApplicationContext(),"Note is updated",Toast.LENGTH_SHORT).show();
-                                finish();
+                                editnoteActivity.this.finish();
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
@@ -84,7 +84,7 @@ public class editnoteActivity extends AppCompatActivity {
                                 Toast.makeText(getApplicationContext(),"Failed to Update",Toast.LENGTH_SHORT).show();
 
                                 startActivity(new Intent(getApplicationContext(),notyy.class));
-                                finish();
+                               editnoteActivity.this.finish();
 
                             }
                         });
@@ -128,7 +128,7 @@ public class editnoteActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int which) {
                             // Dismiss the dialog and do nothing (user chose not to log out)
                             startActivity(new Intent(getApplicationContext(), notyy.class));
-                            finish();
+                            editnoteActivity.this.finish();
                         }
                     })
                     .setCancelable(false); // Prevent dialog dismissal outside of buttons

@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.icu.util.Calendar;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -37,11 +38,41 @@ public class create extends AppCompatActivity {
     FirebaseAuth firebaseAuth;
     FirebaseUser firebaseUser;
 
+
     FirebaseFirestore firebaseFirestore;
+
+    String selectedDate;
+    private void showDate_picker(){
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        // Create a date picker dialog and set the current date as the default date
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this,
+                new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(android.widget.DatePicker view, int year, int month, int dayOfMonth) {
+                        // Handle the selected date (year, month, dayOfMonth)
+                        // Update your UI or store the selected date in your database
+                        // For example: display the selected date in a TextView
+                        selectedDate = dayOfMonth + "/" + (month + 1) + "/" + year;
+                        //textView.setText(selectedDate);
+                    }
+                }, year, month, day);
+
+
+        // Show the date picker dialog
+        datePickerDialog.show();
+
+    }
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+
         setContentView(R.layout.activity_create);
 
         mSave_Note=findViewById(R.id.save_note);
@@ -64,6 +95,7 @@ public class create extends AppCompatActivity {
             public void onClick(View view) {
                 String title = mcreateTitle_note.getText().toString();
                 String content = mcreatecontent_note.getText().toString();
+                String date = selectedDate;
 
                 if(title.isEmpty() || content.isEmpty()){
                     Toast.makeText(getApplicationContext(),"Both field are required ",Toast.LENGTH_SHORT).show();
@@ -72,12 +104,15 @@ public class create extends AppCompatActivity {
                     Map<String , Object> note = new HashMap<>();
                     note.put("title",title);
                     note.put("content",content);
+                    note.put("date",date);
 
                     documentReference.set(note).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             Toast.makeText(getApplicationContext(),"Note Created successfully",Toast.LENGTH_SHORT).show();
+                            create.this.finish();;
                             startActivity(new Intent(getApplicationContext(), notyy.class));
+
 
                         }
                     }).addOnFailureListener(new OnFailureListener() {
@@ -108,29 +143,6 @@ public class create extends AppCompatActivity {
             showDate_picker();
         }
         return super.onOptionsItemSelected(item);
-    }
-    private void showDate_picker(){
-        Calendar calendar = Calendar.getInstance();
-        int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH);
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
-
-        // Create a date picker dialog and set the current date as the default date
-        DatePickerDialog datePickerDialog = new DatePickerDialog(this,
-                new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(android.widget.DatePicker view, int year, int month, int dayOfMonth) {
-                        // Handle the selected date (year, month, dayOfMonth)
-                        // Update your UI or store the selected date in your database
-                        // For example: display the selected date in a TextView
-                        String selectedDate = dayOfMonth + "/" + (month + 1) + "/" + year;
-                        //textView.setText(selectedDate);
-                    }
-                }, year, month, day);
-
-        // Show the date picker dialog
-        datePickerDialog.show();
-
     }
 
     @Override

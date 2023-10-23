@@ -1,18 +1,19 @@
 package com.suhas.sticky;
 
-import java.util.Date;
-
 public class firebasemodel {
 
     private  String title;
     private  String content;
+    private  String date;
 
     public firebasemodel(){
 
     }
-    public firebasemodel(String title,String content,Date _date_){
+    public firebasemodel(String title,String content,String _date_){
         this.content =content;
         this.title = title;
+        this.date = _date_;
+
 
     }
 
@@ -35,6 +36,11 @@ public class firebasemodel {
 
     }
 
+    public String getDate() {
+        return date;
+    }
 
-
+    public void setDate(String _date_) {
+        this.date = _date_;
+    }
 }

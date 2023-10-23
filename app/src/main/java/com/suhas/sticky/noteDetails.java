@@ -3,6 +3,7 @@ package com.suhas.sticky;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,8 +15,9 @@ import android.window.OnBackInvokedDispatcher;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public  class noteDetails extends AppCompatActivity  {
-    private TextView Details,title;
+    private TextView Details,title,mdate;
     FloatingActionButton edit_note;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,7 +26,7 @@ public  class noteDetails extends AppCompatActivity  {
         Details = findViewById(R.id.detail_contentOfNote);
         title = findViewById(R.id.DetailTitleOf_note);
         edit_note = findViewById(R.id.gotoEdit);
-
+        mdate = findViewById(R.id.date_shower);
         Intent data = getIntent();
         edit_note.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -33,6 +35,7 @@ public  class noteDetails extends AppCompatActivity  {
                 intent.putExtra("title",data.getStringExtra("title"));
                 intent.putExtra("content",data.getStringExtra("content"));
                 intent.putExtra("noteId",data.getStringExtra("noteId"));
+                intent.putExtra("date",data.getStringExtra("date"));
                view.getContext().startActivity(intent);
                 finish();
 
@@ -41,6 +44,7 @@ public  class noteDetails extends AppCompatActivity  {
         title.setText(data.getStringExtra("title"));
 
         Details.setText(data.getStringExtra("content"));
+        mdate.setText(data.getStringExtra("date"));
 
     }
 

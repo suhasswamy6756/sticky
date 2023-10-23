@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="my_light_primary">#448AFF</color>
+
+
+
+    <color name="soft_blue">#ADD8E6</color>
+    <color name="pale_green">#98FB98</color>
+    <color name="Lavender">#E6E6FA</color>
+    <color name="peach">#FFDAB9</color>
+    <color name="Light_gray">#D3D3D3</color>
+    <color name="Mint_gray">#C1FFC1</color>
+    <color name="sky_blue">#87CEEB</color>
+    <color name="rose_quartz">#FADAD8</color>
+    <color name="Light_salom">#FFA07A</color>
+    <color name="butter_cream">#FFFACD</color>
+
+
+
+
+
+    <color name="pale_yellow">#FFFFE0</color>
+    <color name="baby_pink">#FFC0CB</color>
+    <color name="periwinkle">#CCCCFF</color>
+    <color name="Light_coral">#F08080</color>
+    <color name="HoneyDew">#F0FFF0</color>
+    <color name="Lilac">#C8A2C8</color>
+    <color name="aqua">#00FFFF</color>
+    <color name="pistachio">#93C572</color>
+    <color name="Blush">#DE5D83</color>
+    <color name="powder_blue">#B0E0E6</color>
+
+
+
+</resources>

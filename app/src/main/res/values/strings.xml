@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">sticky</string>
+    <string name="enter_password">Enter Password</string>
+    <string name="enter_email">Enter Email</string>
+    <string name="go_back"><![CDATA[<- go back]]></string>
+    <string name="default_web_client_id">suhasswamy6756@gamil.com\n</string>
+    <string name="google_authentication_button">google authentication button</string>
+    <string name="log_out">Log Out</string>
+    <string name="all_notes">All notes</string>
+    <string name="_subtitle_">this is your code which appear here</string>
+    <string name="todo">TODO</string>
+</resources>

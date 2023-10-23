@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "441467577097",
+    "project_id": "noteapp-3e001",
+    "storage_bucket": "noteapp-3e001.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:441467577097:android:5e36b7fb45e538f5b769d8",
+        "android_client_info": {
+          "package_name": "com.suhas.sticky"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA-Ah8kYD1EY3YBkt67fiFGRg-hlCisWUA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

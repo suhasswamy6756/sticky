@@ -95,7 +95,6 @@ public class create extends AppCompatActivity {
 
 
     }
-gir
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.date_menu, menu);
@@ -109,6 +108,29 @@ gir
             showDate_picker();
         }
         return super.onOptionsItemSelected(item);
+    }
+    private void showDate_picker(){
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        // Create a date picker dialog and set the current date as the default date
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this,
+                new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(android.widget.DatePicker view, int year, int month, int dayOfMonth) {
+                        // Handle the selected date (year, month, dayOfMonth)
+                        // Update your UI or store the selected date in your database
+                        // For example: display the selected date in a TextView
+                        String selectedDate = dayOfMonth + "/" + (month + 1) + "/" + year;
+                        //textView.setText(selectedDate);
+                    }
+                }, year, month, day);
+
+        // Show the date picker dialog
+        datePickerDialog.show();
+
     }
 
     @Override

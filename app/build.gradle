@@ -16,6 +16,14 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+    buildTypes {
+        release {
+            signingConfig signingConfigs.debug
+        }
+    }
+    aaptOptions {
+        additionalParameters =["--warn-manifest-validation"]
+    }
 
     buildTypes {
         release {

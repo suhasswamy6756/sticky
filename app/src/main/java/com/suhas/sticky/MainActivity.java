@@ -1,6 +1,8 @@
 package com.suhas.sticky;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -27,6 +29,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.io.File;
 import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
@@ -34,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth firebaseAuth;
     Button login,mgotosignup;
+    public static final String SHARED_PREFS_ = "SHARED_PREFS";
+
 
 
     TextView mforgot;
@@ -52,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
             startActivity(new Intent(getApplicationContext(),Sign_up.class));
         }
 
+        checkBox();
+
         mloginEmail = findViewById(R.id.login_email);
         mloginpass = findViewById(R.id.login_password);
         login = findViewById(R.id.btn_log);
@@ -59,6 +66,14 @@ public class MainActivity extends AppCompatActivity {
         mforgot = findViewById(R.id.forgot_pass_login);
         mgotosignup.setOnClickListener(view -> startActivity(new Intent(getApplicationContext(),Sign_up.class)));
         mforgot.setOnClickListener(view -> startActivity(new Intent(getApplicationContext(),forget_pass.class)));
+
+        SharedPreferences preferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+        boolean isLoggedIn = preferences.getBoolean("isLoggedIn", false);
+        if (isLoggedIn) {
+            // User is already logged in, navigate to the main activity
+            startActivity(new Intent(MainActivity.this, notyy.class));
+            finish();
+        }
 
         login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,6 +88,14 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
+
+                                SharedPreferences sharedPreferences= getSharedPreferences(SHARED_PREFS_,MODE_PRIVATE);
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+
+                                editor.putString("name","true");
+                                editor.apply();
+
+
                                 checkemailverification();
                             } else {
                                 Toast.makeText(getApplicationContext(), "Account Doesn't exist", Toast.LENGTH_SHORT).show();
@@ -86,6 +109,20 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+
+    private void checkBox() {
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS_,MODE_PRIVATE);
+        String check = sharedPreferences.getString("name","");
+        if(check.equals("true")){
+            Toast.makeText(getApplicationContext(), "Login Succesfully", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(MainActivity.this,notyy.class));
+            MainActivity.this.finish();
+        }else{
+
+
+        }
+    }
+
     private void checkemailverification(){
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
 //        assert firebaseUser != null;
@@ -100,9 +137,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+
     @Override
     public void onBackPressed() {
-        MainActivity.this.finish();
         super.onBackPressed();
+//        clearAppCache(this);
+//        clearAppData(this);
+        MainActivity.this.finish();
     }
+
+
+//    MainActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), callback);
+
 }

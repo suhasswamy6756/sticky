@@ -126,9 +126,10 @@ public class editnoteActivity extends AppCompatActivity {
                     .setNegativeButton("No", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
+                            editnoteActivity.this.finish();
+
                             // Dismiss the dialog and do nothing (user chose not to log out)
                             startActivity(new Intent(getApplicationContext(), notyy.class));
-                            editnoteActivity.this.finish();
                         }
                     })
                     .setCancelable(false); // Prevent dialog dismissal outside of buttons

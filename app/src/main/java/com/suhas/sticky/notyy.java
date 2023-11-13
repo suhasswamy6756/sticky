@@ -1,14 +1,13 @@
 package com.suhas.sticky;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -29,9 +28,9 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -41,11 +40,14 @@ import java.util.List;
 
 public class notyy extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
-    private int appColor;
+
     RecyclerView recyclerView;
     StaggeredGridLayoutManager staggeredGridLayoutManager;
 
     FirebaseUser firebaseUser;
+    public static final String SHARED_PREFS_ = "SHARED_PREFS";
+
+    String uid ;
     FirebaseFirestore firebaseFirestore;
     FirestoreRecyclerAdapter<firebasemodel, NoteViewHolder> noteAdapter;
     FloatingActionButton mcreate_notes;
@@ -55,6 +57,8 @@ public class notyy extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notyy);
+        FirebaseApp.initializeApp(this);
+
 //        getSupportActionBar().setTitle("All Notes");
         mcreate_notes = findViewById(R.id.create_note);
 
@@ -75,18 +79,20 @@ public class notyy extends AppCompatActivity {
 
             }
         });
+
+
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
             // User is authenticated, you can access their UID
-            String uid = currentUser.getUid();
+            uid = currentUser.getUid();
             // Proceed with your logic here
         } else {
             // User is not authenticated, redirect to the login screen
             startActivity(new Intent(this, MainActivity.class));
-            finish(); // Finish the current activity to prevent returning to it after login
+            notyy.this.finish(); // Finish the current activity to prevent returning to it after login
         }
 
-        Query query = firebaseFirestore.collection("notes").document(firebaseUser.getUid()).collection("myNotes");
+        Query query = firebaseFirestore.collection("notes").document(uid).collection("myNotes").orderBy("title",Query.Direction.ASCENDING);
         FirestoreRecyclerOptions<firebasemodel> alluseernotes = new FirestoreRecyclerOptions.Builder<firebasemodel>().setQuery(query, firebasemodel.class).build();
 
         noteAdapter = new FirestoreRecyclerAdapter<firebasemodel, NoteViewHolder>(alluseernotes) {
@@ -97,7 +103,7 @@ public class notyy extends AppCompatActivity {
 
 
 
-                holder.mnotes = findViewById(R.id.note);
+                holder.m_notes = findViewById(R.id.note);
                 String DocId = noteAdapter.getSnapshots().getSnapshot(position).getId();
 
 
@@ -158,7 +164,12 @@ public class notyy extends AppCompatActivity {
                                         int position = holder.getAdapterPosition();
                                         if (position != RecyclerView.NO_POSITION) {
 //                                            noteAdapter.getSnapshots().getSnapshot(position).getReference().delete();
-                                            noteAdapter.notifyItemRemoved(position);
+
+
+
+                                            // Inside "Delete" menu item click listener
+                                            noteAdapter.notifyItemRemoved(holder.getAbsoluteAdapterPosition());
+
                                         }
                                         Toast.makeText(getApplicationContext(), "This is note is Deleted", Toast.LENGTH_SHORT).show();
                                     }
@@ -186,7 +197,7 @@ public class notyy extends AppCompatActivity {
             }
         };
         recyclerView = findViewById(R.id.recyclerView007);
-//        recyclerView.setHasFixedSize(true);
+        recyclerView.setHasFixedSize(true);
         staggeredGridLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(staggeredGridLayoutManager);
 
@@ -198,14 +209,14 @@ public class notyy extends AppCompatActivity {
     public class NoteViewHolder extends RecyclerView.ViewHolder {
 
         private TextView noteTitle, noteContent,mdate_show;
-        LinearLayout mnotes;
+        LinearLayout m_notes;
 
 
         public NoteViewHolder(@NonNull View itemView) {
             super(itemView);
             noteTitle = itemView.findViewById(R.id.note_title);
             noteContent = itemView.findViewById(R.id.notecontent);
-            mnotes = itemView.findViewById(R.id.note);
+            m_notes = itemView.findViewById(R.id.note);
             mdate_show = itemView.findViewById(R.id.date_show);
 
         }
@@ -223,9 +234,10 @@ public class notyy extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         if (item.getItemId() == R.id.logout) {
+            clearAuthenticationState();
             firebaseAuth.signOut();
-            finish();
-            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+            notyy.this.finish();
+
         }
         return super.onOptionsItemSelected(item);
     }
@@ -303,45 +315,39 @@ public class notyy extends AppCompatActivity {
             R.color.powder_blue
     );
 
-    @Override
-    public void onBackPressed() {
-        // Show an alert dialog when the back button is
-        if (!isFinishing() || isDestroyed()) {
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("Are you sure you want to log out?")
-                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            // Handle logout action here, such as navigating to the login screen
-                            // Finish the current activity
-                            firebaseAuth.signOut();
-
-                            startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                            notyy.this.finish();
-
-                        }
-                    })
-                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            // Dismiss the dialog and do nothing (user chose not to log out)
-                            dialog.dismiss();
-                        }
-                    })
-                    .setCancelable(false); // Prevent dialog dismissal outside of buttons
-
-            AlertDialog alertDialog = builder.create();
-            alertDialog.show();
-
-
-        }else{
+    private void clearAuthenticationState() {
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS_, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.clear(); // Clear any saved authentication data
+        editor.apply();
+        startActivity(new Intent(getApplicationContext(),MainActivity.class));
+        finish();
+    }
+@Override
+public void onBackPressed() {
+    // Check if there are items in your RecyclerView
+    if (noteAdapter.getItemCount() > 0) {
+        // Remove the last item from your data source and notify the adapter
+        int positionToRemove = noteAdapter.getItemCount() - 1;
+//        yourList.remove(positionToRemove);
+        noteAdapter.notifyItemRemoved(positionToRemove);
+    }
+    if(isUserAuthenticated()){
+        finishAffinity();
+    }else{
         super.onBackPressed();
+
     }
-    }
-    public int getItemCount(){
-        return noteAdapter.getItemCount();
-    }
+
+
+}
+private boolean isUserAuthenticated(){
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS_,MODE_PRIVATE);
+
+        return sharedPreferences.contains(uid);
+}
+
+
 
 
 }

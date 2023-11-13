@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -26,7 +27,7 @@ public class Sign_up extends AppCompatActivity {
     FirebaseAuth firebaseAuth;
     private Button Register;
 
-    @SuppressLint("MissingInflatedId")
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +47,7 @@ public class Sign_up extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(),MainActivity.class);
                 startActivity(intent);
+                Sign_up.this.finish();
             }
         });
         Register.setOnClickListener(new View.OnClickListener() {
@@ -79,6 +81,7 @@ public class Sign_up extends AppCompatActivity {
                 }
             }
         });
+//        finish_act();
 
     }
     private void sendEmailVerification(){
@@ -88,9 +91,12 @@ public class Sign_up extends AppCompatActivity {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     Toast.makeText(getApplicationContext(),"Verfication emial is sent,verify and Login again",Toast.LENGTH_SHORT).show();
-                    firebaseAuth.signOut();
-                    Sign_up.this.finish();
+//                    firebaseAuth.signOut();
+
                     startActivity(new Intent(getApplicationContext(),MainActivity.class));
+                    finish_act();
+
+
                 }
             });
         }else{
@@ -99,4 +105,15 @@ public class Sign_up extends AppCompatActivity {
 
         }
     }
+
+    @Override
+    public void onBackPressed() {
+
+        super.onBackPressed();
+    }
+
+    private void finish_act(){
+        Sign_up.this.finish();
+    }
+
 }
